@@ -19,18 +19,33 @@ MonoBehaviour:
     From: 0
     NameToFullName: []
     BindInfos:
+    - TypeName: UnityEngine.UI.Text
+      PathToRoot: Viewport/content/id/idText
+      MemberName: idText
     - TypeName: UnityEngine.UI.InputField
-      PathToRoot: Viewport/layer/layerNum/layNumInput
-      MemberName: layNumInput
-    - TypeName: RectTransform
-      PathToRoot: Viewport/layer/layerContent
-      MemberName: layerContent
+      PathToRoot: Viewport/content/id/idInput
+      MemberName: idInput
+    - TypeName: UnityEngine.UI.Text
+      PathToRoot: Viewport/content/block/blockText
+      MemberName: blockText
+    - TypeName: UnityEngine.UI.InputField
+      PathToRoot: Viewport/content/block/blockInput
+      MemberName: blockInput
+    - TypeName: UnityEngine.UI.Text
+      PathToRoot: Viewport/content/layer/layerText
+      MemberName: layerText
+    - TypeName: UnityEngine.UI.InputField
+      PathToRoot: Viewport/content/layer/layerInput
+      MemberName: layerInput
     ScriptsFolder: Assets/Scripts/ViewCtrl
-    ClassName: InspectorSection
+    ClassName: InspectorObject
     Namespace: DCEditor.ViewCtrl
     MainCode: "using UnityEngine;\r\nusing QFramework;\r\n\r\nnamespace DCEditor.ViewCtrl\r\n{\r\n\tpublic
-      partial class InspectorSection : ViewController\r\n\t{\r\n\t\tvoid Start()\r\n\t\t{\r\n\t\t\t//
+      partial class InspectorObject : ViewController\r\n\t{\r\n\t\tvoid Start()\r\n\t\t{\r\n\t\t\t//
       Code Here\r\n\t\t}\r\n\t}\r\n}\r\n"
-    DesignerCode: "// Generate Id:3e9e69f8-ec8a-4189-aea4-cfcf4edbddfd\r\nusing UnityEngine;\r\n\r\nnamespace
-      DCEditor.ViewCtrl\r\n{\r\n\tpublic partial class InspectorSection\r\n\t{\r\n\r\n\t\tpublic
-      UnityEngine.UI.InputField layNumInput;\r\n\r\n\t\tpublic RectTransform layerContent;\r\n\r\n\t}\r\n}\r\n"
+    DesignerCode: "// Generate Id:ebb0c7fa-8459-4474-9193-371eec7187f2\r\nusing UnityEngine;\r\n\r\nnamespace
+      DCEditor.ViewCtrl\r\n{\r\n\tpublic partial class InspectorObject\r\n\t{\r\n\r\n\t\tpublic
+      UnityEngine.UI.Text idText;\r\n\r\n\t\tpublic UnityEngine.UI.InputField idInput;\r\n\r\n\t\tpublic
+      UnityEngine.UI.Text blockText;\r\n\r\n\t\tpublic UnityEngine.UI.InputField
+      blockInput;\r\n\r\n\t\tpublic UnityEngine.UI.Text layerText;\r\n\r\n\t\tpublic
+      UnityEngine.UI.InputField layerInput;\r\n\r\n\t}\r\n}\r\n"

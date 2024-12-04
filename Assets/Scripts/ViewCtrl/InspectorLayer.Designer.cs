@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DCEditor.ViewCtrl
 {
-	public partial class InspectorSection
+	public partial class InspectorLayer
 	{
 
 		public UnityEngine.UI.InputField layNumInput;

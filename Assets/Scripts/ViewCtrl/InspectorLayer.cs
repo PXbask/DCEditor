@@ -5,7 +5,7 @@ using QFramework;
 
 namespace DCEditor.ViewCtrl
 {
-	public partial class InspectorSection : ViewController
+	public partial class InspectorLayer : ViewController
 	{
 		[SerializeField] private layerDetail layerDetailPrefab;
 		
