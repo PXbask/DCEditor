@@ -1,12 +1,23 @@
 using System;
 using DCEditor.Data;
+using DCEditor.Drawer;
 using UnityEngine;
 
 namespace DCEditor
 {
+    [ExecuteAlways]
     public class DCDominoCard : MonoBehaviour
     {
-        public DominoData Data { get; set; }
+        [ReadOnly]
+        [SerializeField]
+        [Header("骨牌数据")]
+        private DominoData m_data;
+
+        public DominoData Data
+        {
+            get => m_data;
+            set => m_data = value;
+        }
 
         public int Id
         {
@@ -22,11 +33,21 @@ namespace DCEditor
 
         private bool operationCancelled;
 
-        public void Init(int id)
+        public void Init(int id, int layer)
         {
             Data = new DominoData();
             Data.id = id;
-            Data.layer = -1;
+            Data.layer = layer;
+        }
+
+        public void Update()
+        {
+            Vector3 pos = transform.localPosition;
+            pos = new Vector3(pos.x, 0, pos.y);
+            transform.localPosition = pos;
+            
+            Data.position = transform.position;
+            Data.rotation = transform.rotation.eulerAngles;
         }
 
         public void UpdateLayer(int v)
@@ -82,6 +103,30 @@ namespace DCEditor
             {
                 lst[Layer].dominos.Remove(Data);
                 DestroyImmediate(gameObject);
+            }
+        }
+
+        /// <summary>
+        /// 获取遮挡关系
+        /// </summary>
+        public void UpdateColliderData()
+        {
+            Vector3 extent = GetComponent<Renderer>().bounds.extents;
+            Vector3 halfExtents = new Vector3(extent.x, extent.y + 0.01f, extent.z);
+            var res = Physics.OverlapBox(transform.position, halfExtents);
+            Data.blocks.Clear();
+            
+            foreach (var r in res)
+            {
+                GameObject obj = r.gameObject;
+                if (obj.transform.position.y < gameObject.transform.position.y)
+                {
+                    DCDominoCard card = obj.GetComponent<DCDominoCard>();
+                    if (card != null && card != this && card.Data.layer == Data.layer - 1)
+                    {
+                        Data.blocks.Add(card.Data.id);
+                    }
+                }
             }
         }
     }

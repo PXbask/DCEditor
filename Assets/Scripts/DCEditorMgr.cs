@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using DCEditor.Data;
 using DCEditor.Drawer;
-using QFramework;
-using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEngine;
-using UnityEngine.Serialization;
+using SimpleJSON;
+using UnityEditor;
 
 namespace DCEditor
 {
@@ -42,6 +40,7 @@ namespace DCEditor
         /// <summary>
         /// 棋盘数据
         /// </summary>
+        [Drawer.ReadOnly]
         [SerializeField] 
         [Header("棋盘数据")]
         private List<LayerData> broadDetails;
@@ -49,8 +48,11 @@ namespace DCEditor
         public List<LayerData> BroadDetails => broadDetails;
         
         public Transform Root => transform;
-
-        private static int idNum = 0;
+        
+        [DisplayName("导出地址(附名称.dclayout)")]
+        public string exportPath;
+        [DisplayName("导入地址(附名称.dclayout)")]
+        public string importPath;
 
         #region 修改层级
         public void UpdateLayerDetails(int count)
@@ -108,6 +110,9 @@ namespace DCEditor
                     Vector3 pos = newObj.transform.position;
                     Vector3 bound = dominoPrefab.GetComponent<Renderer>().bounds.extents;
                     newObj.transform.position = new Vector3(pos.x, (2 * i + 1) * bound.y, pos.z);
+
+                    DCLayer lr = newObj.AddComponent<DCLayer>();
+                    lr.Init(i);
                 }
             }
         }
@@ -127,7 +132,6 @@ namespace DCEditor
         private void ResetBoardRefreshInspector()
         {
             broadDetails = null;
-            idNum = 0;
         }
 
         private void ResetBoardRefreshHierarchy()
@@ -150,12 +154,110 @@ namespace DCEditor
                 broadDetails[i].dominos.Clear();
                 
                 Transform trans = Root.GetChild(i);
+                DCLayer dclayer = trans.GetComponent<DCLayer>();
                 for (int j = 0; j < trans.childCount; j++)
                 {
                     Transform tr = trans.GetChild(j);
-                    DominoData data = tr.GetComponent<DCDominoCard>().Data;
-                    broadDetails[i].dominos.Add(data);
+                    DCDominoCard card = tr.GetComponent<DCDominoCard>();
+                    card.Init(i * 10000 + j, dclayer.Layer);
+                    broadDetails[i].dominos.Add(card.Data);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 获取所有遮挡关系
+        /// </summary>
+        public void GetAllColliderRelation()
+        {
+            for (int i = 0; i < Root.childCount; i++)
+            {
+                Transform trans = Root.GetChild(i);
+                for (int j = 0; j < trans.childCount; j++)
+                {
+                    Transform tr = trans.GetChild(j);
+                    DCDominoCard card = tr.GetComponent<DCDominoCard>();
+                    card.UpdateColliderData();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 导出配置
+        /// </summary>
+        public void ExportCfg()
+        {
+            List<DominoData> datas = new List<DominoData>();
+            for (int i = 0; i < Root.childCount; i++)
+            {
+                Transform trans = Root.GetChild(i);
+                for (int j = 0; j < trans.childCount; j++)
+                {
+                    Transform tr = trans.GetChild(j);
+                    DCDominoCard card = tr.GetComponent<DCDominoCard>();
+                    datas.Add(card.Data);
+                }
+            }
+
+            DominoDataList lst = new DominoDataList(datas);
+            string json = JsonUtility.ToJson(lst);
+
+            bool res = true;
+            if (File.Exists(exportPath))
+            {
+                res = EditorUtility.DisplayDialog("", "文件已存在，是否覆盖？", "是", "否");
+            }
+            if (res)
+            {
+                try
+                {
+                    using (StreamWriter writer = new StreamWriter(exportPath))
+                    {
+                        writer.Write(json);
+                        EditorUtility.DisplayDialog("", "导出成功", "ok");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    EditorUtility.DisplayDialog("", "导出操作取消：" + ex, "ok");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 导入配置
+        /// </summary>
+        public void ImportCfg()
+        {
+            DominoDataList lst;
+            try
+            {
+                using (StreamReader reader = new StreamReader(importPath))
+                {
+                    string data = reader.ReadToEnd();
+                    lst = JsonUtility.FromJson<DominoDataList>(data);
+                    if (lst == null)
+                    {
+                        EditorUtility.DisplayDialog("", "这不是一个正确格式的配置", "ok");
+                    }
+                    else
+                    {
+                        EditorUtility.DisplayDialog("", "导入成功", "ok");
+                        DoImport(lst);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // ignored
+            }
+        }
+
+        private void DoImport(DominoDataList cfg)
+        {
+            foreach (var item in cfg.lst)
+            {
+                
             }
         }
     }

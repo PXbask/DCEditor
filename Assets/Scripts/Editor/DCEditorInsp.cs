@@ -23,6 +23,18 @@ namespace DCEditor
                     mgr.ResetBoard();
                 }
             }
+            if (GUILayout.Button("获取所有遮挡关系"))
+            {
+                mgr.GetAllColliderRelation();
+            }
+            if (GUILayout.Button("导出配置"))
+            {
+                mgr.ExportCfg();
+            }
+            if (GUILayout.Button("导入配置"))
+            {
+                mgr.ImportCfg();
+            }
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("层级数");
             tmp_layerCount = EditorGUILayout.IntField(tmp_layerCount);
