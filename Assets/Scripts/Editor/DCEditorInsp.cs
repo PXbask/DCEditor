@@ -9,6 +9,8 @@ namespace DCEditor
     {
         private DCEditorMgr mgr;
 
+        private int tmp_layerCount;
+
         public override void OnInspectorGUI()
         {
             mgr = (DCEditorMgr)target; 
@@ -17,12 +19,20 @@ namespace DCEditor
             {
                 mgr.CreateNew();
             }
+            if (GUILayout.Button("**重置**(谨慎)"))
+            {
+                bool result = EditorUtility.DisplayDialog("注意", "确定要重置棋盘吗?", "OK", "Cancel");
+                if (result)
+                {
+                    mgr.ResetBoard();
+                }
+            }
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("层级数");
-            mgr.LayerCount = EditorGUILayout.IntField(mgr.LayerCount);
+            tmp_layerCount = EditorGUILayout.IntField(tmp_layerCount);
             if (GUILayout.Button("修改"))
             {
-                mgr.UpdateLayerDetails(mgr.LayerCount);
+                mgr.UpdateLayerDetails(tmp_layerCount);
             }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
