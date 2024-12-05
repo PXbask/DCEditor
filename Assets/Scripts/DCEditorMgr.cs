@@ -47,37 +47,12 @@ namespace DCEditor
         private List<LayerData> broadDetails;
 
         public List<LayerData> BroadDetails => broadDetails;
-
-        /// <summary>
-        /// 临时父物体
-        /// </summary>
-        [SerializeField]
-        private Transform TmpRoot;
         
         public Transform Root => transform;
 
         private static int idNum = 0;
-        
-        // [InitializeOnLoadMethod]
-        // static void Initialize()
-        // {
-        //     EditorApplication.hierarchyChanged -= Refresh;
-        // }
-        //
-        // [DidReloadScripts]
-        // static void OnScriptsReloaded()
-        // {
-        //     EditorApplication.hierarchyChanged -= Refresh;
-        // }
 
-        public void CreateNew()
-        {
-            DCDominoCard card = Instantiate(dominoPrefab, TmpRoot);
-            card.Init(idNum++);
-            Selection.activeGameObject = card.gameObject;
-        }
-
-        #region UpdateTotalLayerCount
+        #region 修改层级
         public void UpdateLayerDetails(int count)
         {
             UpdateLayerRefreshInspector(count);
@@ -120,7 +95,7 @@ namespace DCEditor
             {
                 for (int i = count; i < childCount; i++)
                 {
-                    Destroy(Root.GetChild(count));
+                    DestroyImmediate(Root.GetChild(count));
                 }
             }
             //少的添加
@@ -138,7 +113,7 @@ namespace DCEditor
         }
         #endregion
 
-        #region ResetBroad
+        #region 重置棋盘
 
         /// <summary>
         /// 重置棋盘
@@ -161,12 +136,27 @@ namespace DCEditor
             {
                 DestroyImmediate(Root.GetChild(i).gameObject);
             }
-            for (int i = TmpRoot.childCount - 1; i >= 0 ; i--)
-            {
-                DestroyImmediate(TmpRoot.GetChild(i).gameObject);
-            }
         }
 
         #endregion
+
+        /// <summary>
+        /// 刷新棋盘下子物体们的所有信息
+        /// </summary>
+        public void RefreshInspector()
+        {
+            for (int i = 0; i < Root.childCount; i++)
+            {
+                broadDetails[i].dominos.Clear();
+                
+                Transform trans = Root.GetChild(i);
+                for (int j = 0; j < trans.childCount; j++)
+                {
+                    Transform tr = trans.GetChild(j);
+                    DominoData data = tr.GetComponent<DCDominoCard>().Data;
+                    broadDetails[i].dominos.Add(data);
+                }
+            }
+        }
     }
 }

@@ -15,10 +15,6 @@ namespace DCEditor
         {
             mgr = (DCEditorMgr)target; 
             GUILayout.BeginVertical();
-            if (GUILayout.Button("生成新物体"))
-            {
-                mgr.CreateNew();
-            }
             if (GUILayout.Button("**重置**(谨慎)"))
             {
                 bool result = EditorUtility.DisplayDialog("注意", "确定要重置棋盘吗?", "OK", "Cancel");
