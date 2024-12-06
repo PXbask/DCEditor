@@ -5,7 +5,6 @@ using System.Linq;
 using DCEditor.Data;
 using DCEditor.Drawer;
 using UnityEngine;
-using SimpleJSON;
 using UnityEditor;
 
 namespace DCEditor
@@ -13,15 +12,14 @@ namespace DCEditor
     [ExecuteAlways]
     public class DCEditorMgr : MonoBehaviour
     {
-        public static DCEditorMgr instance;
-
+        private static DCEditorMgr m_instance;
         public static DCEditorMgr Instance
         {
             get
             {
-                if (instance == null)
-                    instance = FindFirstObjectByType<DCEditorMgr>();
-                return instance;
+                if (m_instance == null)
+                    m_instance = FindFirstObjectByType<DCEditorMgr>();
+                return m_instance;
             }
         }
 
@@ -29,13 +27,8 @@ namespace DCEditor
         /// 需要生成的预制体
         /// </summary>
         [SerializeField] 
-        [DCEditor.Drawer.DisplayName("预制体")]
+        [DisplayName("要摆放的预制体")]
         private DCDominoCard dominoPrefab;
-        
-        /// <summary>
-        /// 层级数
-        /// </summary>
-        public int LayerCount { get; set; }
         
         /// <summary>
         /// 棋盘数据
@@ -43,115 +36,30 @@ namespace DCEditor
         [Drawer.ReadOnly]
         [SerializeField] 
         [Header("棋盘数据")]
-        private List<LayerData> broadDetails;
-
-        public List<LayerData> BroadDetails => broadDetails;
+        private List<LayerData> m_broadDetails;
+        public List<LayerData> BroadDetails
+        {
+            get => m_broadDetails;
+        }
         
+        /// <summary>
+        /// Mgr物体下的根节点
+        /// </summary>
         public Transform Root => transform;
         
         [DisplayName("导出地址(附名称.dclayout)")]
         public string exportPath;
         [DisplayName("导入地址(附名称.dclayout)")]
         public string importPath;
-
-        #region 修改层级
-        public void UpdateLayerDetails(int count)
-        {
-            UpdateLayerRefreshInspector(count);
-            UpdateLayerRefreshHierarchy(count);
-        }
-
-        public void UpdateLayerRefreshInspector(int count)
-        {
-            if (broadDetails == null)
-            {
-                broadDetails = new List<LayerData>(count);
-                for (int i = 0; i < count; i++)
-                {
-                    broadDetails.Add(new LayerData());
-                }
-            }
-            else
-            {
-                List<LayerData> tmplst = new List<LayerData>(broadDetails);
-                broadDetails = new List<LayerData>(count);
-                for (int i = 0; i < count; i++)
-                {
-                    if (i < tmplst.Count)
-                    {
-                        broadDetails.Add(tmplst[i]);
-                    }
-                    else
-                    {
-                        broadDetails.Add(new LayerData());
-                    }
-                }
-            }
-        }
         
-        private void UpdateLayerRefreshHierarchy(int count)
-        {
-            int childCount = Root.childCount;
-            //多余的删掉
-            if (count < childCount)
-            {
-                for (int i = count; i < childCount; i++)
-                {
-                    DestroyImmediate(Root.GetChild(count));
-                }
-            }
-            //少的添加
-            if (count > childCount)
-            {
-                for (int i = childCount; i < count; i++)
-                {
-                    GameObject newObj = new GameObject($"layer_{i}");
-                    newObj.transform.SetParent(Root);
-                    Vector3 pos = newObj.transform.position;
-                    Vector3 bound = dominoPrefab.GetComponent<Renderer>().bounds.extents;
-                    newObj.transform.position = new Vector3(pos.x, (2 * i + 1) * bound.y, pos.z);
-
-                    DCLayer lr = newObj.AddComponent<DCLayer>();
-                    lr.Init(i);
-                }
-            }
-        }
-        #endregion
-
-        #region 重置棋盘
-
         /// <summary>
-        /// 重置棋盘
+        /// 刷新棋盘下子物体的所有信息, 并添加到数据中
         /// </summary>
-        public void ResetBoard()
-        {
-            ResetBoardRefreshInspector();
-            ResetBoardRefreshHierarchy();
-        }
-
-        private void ResetBoardRefreshInspector()
-        {
-            broadDetails = null;
-        }
-
-        private void ResetBoardRefreshHierarchy()
-        {
-            for (int i = Root.childCount - 1; i >= 0 ; i--)
-            {
-                DestroyImmediate(Root.GetChild(i).gameObject);
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 刷新棋盘下子物体们的所有信息
-        /// </summary>
-        public void RefreshInspector()
+        public void RefreshAllData()
         {
             for (int i = 0; i < Root.childCount; i++)
             {
-                broadDetails[i].dominos.Clear();
+                m_broadDetails[i].dominos.Clear();
                 
                 Transform trans = Root.GetChild(i);
                 DCLayer dclayer = trans.GetComponent<DCLayer>();
@@ -160,13 +68,13 @@ namespace DCEditor
                     Transform tr = trans.GetChild(j);
                     DCDominoCard card = tr.GetComponent<DCDominoCard>();
                     card.Init(i * 10000 + j, dclayer.Layer);
-                    broadDetails[i].dominos.Add(card.Data);
+                    m_broadDetails[i].dominos.Add(card.Data);
                 }
             }
         }
 
         /// <summary>
-        /// 获取所有遮挡关系
+        /// 获取层级之间所有遮挡关系
         /// </summary>
         public void GetAllColliderRelation()
         {
@@ -226,6 +134,117 @@ namespace DCEditor
             AssetDatabase.Refresh();
         }
 
+        #region 修改层级
+        
+        /// <summary>
+        /// 修改层级
+        /// </summary>
+        /// <param name="count">层级数</param>
+        public void UpdateLayerDetails(int count)
+        {
+            UpdateLayerRefreshInspector(count);
+            UpdateLayerRefreshHierarchy(count);
+        }
+
+        /// <summary>
+        /// 刷新数据
+        /// </summary>
+        private void UpdateLayerRefreshInspector(int count)
+        {
+            //当棋盘信息没有被赋值时
+            if (m_broadDetails == null)
+            {
+                m_broadDetails = new List<LayerData>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    m_broadDetails.Add(new LayerData());
+                }
+            }
+            //当棋盘信息已经有其他值时，会复用之前的部分数据
+            else
+            {
+                List<LayerData> tmplst = new List<LayerData>(m_broadDetails);
+                m_broadDetails = new List<LayerData>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    if (i < tmplst.Count)
+                    {
+                        m_broadDetails.Add(tmplst[i]);
+                    }
+                    else
+                    {
+                        m_broadDetails.Add(new LayerData());
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// 刷新Hierarchy结构
+        /// </summary>
+        private void UpdateLayerRefreshHierarchy(int count)
+        {
+            int childCount = Root.childCount;
+            //多余的层级删掉
+            if (count < childCount)
+            {
+                for (int i = count; i < childCount; i++)
+                {
+                    DestroyImmediate(Root.GetChild(count));
+                }
+            }
+            //缺少的层级会添加
+            if (count > childCount)
+            {
+                for (int i = childCount; i < count; i++)
+                {
+                    GameObject newObj = new GameObject($"layer_{i}");
+                    newObj.transform.SetParent(Root);
+                    Vector3 pos = newObj.transform.position;
+                    Vector3 extents = dominoPrefab.GetComponent<Renderer>().bounds.extents;
+                    newObj.transform.position = new Vector3(pos.x, (2 * i + 1) * extents.y, pos.z);
+
+                    DCLayer lr = newObj.AddComponent<DCLayer>();
+                    lr.Init(i);
+                }
+            }
+        }
+        #endregion
+
+        #region 重置棋盘
+
+        /// <summary>
+        /// 重置棋盘
+        /// </summary>
+        public void ResetBoard()
+        {
+            ResetBoardRefreshInspector();
+            ResetBoardRefreshHierarchy();
+        }
+
+        /// <summary>
+        /// 重置数据信息
+        /// </summary>
+        private void ResetBoardRefreshInspector()
+        {
+            m_broadDetails = null;
+        }
+
+        /// <summary>
+        /// 重置Hierarchy信息
+        /// </summary>
+        private void ResetBoardRefreshHierarchy()
+        {
+            for (int i = Root.childCount - 1; i >= 0 ; i--)
+            {
+                DestroyImmediate(Root.GetChild(i).gameObject);
+            }
+        }
+
+        #endregion
+
+        #region 导入配置
+
         /// <summary>
         /// 导入配置
         /// </summary>
@@ -257,6 +276,9 @@ namespace DCEditor
             }
         }
 
+        /// <summary>
+        /// 导入操作
+        /// </summary>
         private void DoImport(DominoDataList cfg)
         {
             int max = cfg.lst.Max(x => x.layer);
@@ -267,14 +289,16 @@ namespace DCEditor
                 Transform trans = Root.GetChild(item.layer);
                 DCDominoCard card = Instantiate(dominoPrefab, trans);
                 card.Init(item.id, item.layer);
-                broadDetails[item.layer].dominos.Add(card.Data);
+                m_broadDetails[item.layer].dominos.Add(card.Data);
 
                 card.transform.position = item.position;
                 card.transform.rotation = Quaternion.Euler(item.rotation);
                 card.m_type = item.type;
             }
             
-            RefreshInspector();
+            RefreshAllData();
         }
+
+        #endregion
     }
 }

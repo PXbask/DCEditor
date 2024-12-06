@@ -13,7 +13,7 @@ namespace DCEditor
 
         private static void OnHierarchyChanged()
         {
-            DCEditorMgr.Instance.RefreshInspector();
+            DCEditorMgr.Instance.RefreshAllData();
         }
     }
 }
