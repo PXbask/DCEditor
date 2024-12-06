@@ -21,6 +21,7 @@ namespace DCEditor
                 if (result)
                 {
                     mgr.ResetBoard();
+                    EditorUtility.SetDirty(mgr);
                 }
             }
             if (GUILayout.Button("获取所有遮挡关系"))

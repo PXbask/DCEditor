@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DCEditor
 {
+    [CanEditMultipleObjects]
     [CustomEditor(typeof(DCDominoCard))]
     public class DCDominoCardInsp : Editor
     {

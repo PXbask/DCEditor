@@ -180,6 +180,7 @@ namespace DCEditor
                     card.UpdateColliderData();
                 }
             }
+            EditorUtility.DisplayDialog("", "生成遮挡关系成功", "ok");
         }
 
         /// <summary>
@@ -222,6 +223,7 @@ namespace DCEditor
                     EditorUtility.DisplayDialog("", "导出操作取消：" + ex, "ok");
                 }
             }
+            AssetDatabase.Refresh();
         }
 
         /// <summary>
@@ -229,6 +231,8 @@ namespace DCEditor
         /// </summary>
         public void ImportCfg()
         {
+            ResetBoard();
+            
             DominoDataList lst;
             try
             {
@@ -255,10 +259,22 @@ namespace DCEditor
 
         private void DoImport(DominoDataList cfg)
         {
+            int max = cfg.lst.Max(x => x.layer);
+
+            UpdateLayerDetails(max + 1);
             foreach (var item in cfg.lst)
             {
-                
+                Transform trans = Root.GetChild(item.layer);
+                DCDominoCard card = Instantiate(dominoPrefab, trans);
+                card.Init(item.id, item.layer);
+                broadDetails[item.layer].dominos.Add(card.Data);
+
+                card.transform.position = item.position;
+                card.transform.rotation = Quaternion.Euler(item.rotation);
+                card.m_type = item.type;
             }
+            
+            RefreshInspector();
         }
     }
 }

@@ -8,6 +8,19 @@ namespace DCEditor
     [ExecuteAlways]
     public class DCDominoCard : MonoBehaviour
     {
+        [SerializeField]
+        private Material mat_front;
+        
+        [SerializeField]
+        private Material mat_back;
+        
+        [SerializeField]
+        private Material mat_special;
+        
+        [SerializeField]
+        [Header("骨牌类型")] 
+        public DominoCardType m_type;
+        
         [ReadOnly]
         [SerializeField]
         [Header("骨牌数据")]
@@ -38,12 +51,46 @@ namespace DCEditor
             Data = new DominoData();
             Data.id = id;
             Data.layer = layer;
+            Data.type = DominoCardType.Front;
+
+            UpdateObjData();
+        }
+
+        private void OnValidate()
+        {
+            UpdateObjData();
+        }
+
+        private void UpdateObjData()
+        {
+            UpdateDominoType();
+        }
+
+        private void UpdateDominoType()
+        {
+            Data.type = m_type;
+
+            MeshRenderer renderer = GetComponent<MeshRenderer>();
+            switch (Data.type)
+            {
+                case DominoCardType.Front:
+                    renderer.material = mat_front;
+                    break;
+                case DominoCardType.Back:
+                    renderer.material = mat_back;
+                    break;
+                case DominoCardType.Special:
+                    renderer.material = mat_special;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public void Update()
         {
             Vector3 pos = transform.localPosition;
-            pos = new Vector3(pos.x, 0, pos.y);
+            pos = new Vector3(pos.x, 0, pos.z);
             transform.localPosition = pos;
             
             Data.position = transform.position;
