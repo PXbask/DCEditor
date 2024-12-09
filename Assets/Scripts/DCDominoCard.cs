@@ -89,10 +89,15 @@ namespace DCEditor
 
         public void Update()
         {
+            //保证y轴为0
             Vector3 pos = transform.localPosition;
             pos = new Vector3(pos.x, 0, pos.z);
             transform.localPosition = pos;
-            
+            //保证只能移动y轴
+            Vector3 euler = transform.rotation.eulerAngles;
+            euler = new Vector3(0, euler.y, 0);
+            transform.rotation = Quaternion.Euler(euler);
+            //实时更新数据
             Data.position = transform.position;
             Data.rotation = transform.rotation.eulerAngles;
         }
