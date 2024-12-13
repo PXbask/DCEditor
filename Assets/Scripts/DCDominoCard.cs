@@ -93,7 +93,7 @@ namespace DCEditor
             Vector3 pos = transform.localPosition;
             pos = new Vector3(pos.x, 0, pos.z);
             transform.localPosition = pos;
-            //保证只能移动y轴
+            //保证只能旋转y轴
             Vector3 euler = transform.rotation.eulerAngles;
             euler = new Vector3(0, euler.y, 0);
             transform.rotation = Quaternion.Euler(euler);
