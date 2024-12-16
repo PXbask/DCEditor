@@ -149,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 18811946}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 6.5, y: 0, z: 0}
+  m_LocalPosition: {x: -34.7, y: 0, z: 19.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -176,7 +176,7 @@ MonoBehaviour:
     id: 10000
     layer: 1
     blocks: 
-    position: {x: 6.5, y: 5.144416, z: 0}
+    position: {x: -34.7, y: 5.144416, z: 19.7}
     rotation: {x: -0, y: 90, z: -0}
 --- !u!54 &18811949
 Rigidbody:
@@ -379,27 +379,27 @@ MonoBehaviour:
       id: 0
       layer: 0
       blocks: 
-      position: {x: 0, y: 1.7148052, z: 0}
+      position: {x: -41.2, y: 1.7148052, z: 19.7}
       rotation: {x: -0, y: 0, z: 0}
     - type: 1
       id: 1
       layer: 0
       blocks: 
-      position: {x: 16.2, y: 1.7148052, z: -0.3}
+      position: {x: -25, y: 1.7148052, z: 19.400002}
       rotation: {x: -0, y: 90, z: -0}
   - dominos:
     - type: 1
       id: 10000
       layer: 1
       blocks: 
-      position: {x: 6.5, y: 5.144416, z: 0}
+      position: {x: -34.7, y: 5.144416, z: 19.7}
       rotation: {x: -0, y: 90, z: -0}
   - dominos:
     - type: 1
       id: 20000
       layer: 2
       blocks: 
-      position: {x: 5.2, y: 8.574026, z: 2.1}
+      position: {x: -36, y: 8.574026, z: 21.800001}
       rotation: {x: -0, y: 0, z: 0}
   exportPath: D:\UnityProject\DominoCraftEditor\Assets\Export\example_1.dclayout
   importPath: D:\UnityProject\DominoCraftEditor\Assets\Export\example_1.dclayout
@@ -433,7 +433,7 @@ Transform:
   m_GameObject: {fileID: 634566443}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -41.2, y: 0, z: 19.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -460,7 +460,7 @@ MonoBehaviour:
     id: 0
     layer: 0
     blocks: 
-    position: {x: 0, y: 1.7148052, z: 0}
+    position: {x: -41.2, y: 1.7148052, z: 19.7}
     rotation: {x: -0, y: 0, z: 0}
 --- !u!54 &634566446
 Rigidbody:
@@ -593,7 +593,7 @@ Transform:
   m_GameObject: {fileID: 675069448}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.2, y: 0, z: 2.1}
+  m_LocalPosition: {x: -36, y: 0, z: 21.800001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -620,7 +620,7 @@ MonoBehaviour:
     id: 20000
     layer: 2
     blocks: 
-    position: {x: 5.2, y: 8.574026, z: 2.1}
+    position: {x: -36, y: 8.574026, z: 21.800001}
     rotation: {x: -0, y: 0, z: 0}
 --- !u!54 &675069451
 Rigidbody:
@@ -862,7 +862,7 @@ Transform:
   m_GameObject: {fileID: 1193088321}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 16.2, y: 0, z: -0.3}
+  m_LocalPosition: {x: -25, y: 0, z: 19.400002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -889,7 +889,7 @@ MonoBehaviour:
     id: 1
     layer: 0
     blocks: 
-    position: {x: 16.2, y: 1.7148052, z: -0.3}
+    position: {x: -25, y: 1.7148052, z: 19.400002}
     rotation: {x: -0, y: 90, z: -0}
 --- !u!54 &1193088324
 Rigidbody:
