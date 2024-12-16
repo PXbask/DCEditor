@@ -28,19 +28,6 @@ namespace DCEditor
             {
                 mgr.GetAllColliderRelation();
             }
-            
-            GUILayout.Label("对称");
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("沿x轴对称"))
-            {
-                mgr.SymmetricalAlongX();
-            }
-            if (GUILayout.Button("沿z轴对称"))
-            {
-                mgr.SymmetricalAlongZ();
-            }
-            GUILayout.EndHorizontal();
-            
             if (GUILayout.Button("导出配置"))
             {
                 mgr.ExportCfg();

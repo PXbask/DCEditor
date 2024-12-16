@@ -51,6 +51,8 @@ namespace DCEditor
         public string exportPath;
         [DisplayName("导入地址(附名称.dclayout)")]
         public string importPath;
+
+        public GameObject GetPrefab => dominoPrefab.gameObject;
         
         /// <summary>
         /// 刷新棋盘下子物体的所有信息, 并添加到数据中
@@ -297,76 +299,6 @@ namespace DCEditor
             }
             
             RefreshAllData();
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 沿x轴对称
-        /// </summary>
-        public void SymmetricalAlongX()
-        {
-            int childCount = Root.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform trans = Root.GetChild(i);
-                if(!IsDCLayer(trans)) return;
-                int count = trans.childCount;
-                for (int j = 0; j < count; j++)
-                {
-                    Transform cardTrans = trans.GetChild(j);
-                    if(!IsDCCard(cardTrans)) return;
-                    //在对称位置生成物体
-                    Vector3 originPos = cardTrans.position;
-                    Vector3 symmetricalPos = new Vector3(-originPos.x, originPos.y, originPos.z);
-                    Vector3 originRot = cardTrans.rotation.eulerAngles;
-                    Vector3 symmetricalRot = new Vector3(originRot.x, 180 - originRot.y, originRot.z);
-                    DCDominoCard card = Instantiate(dominoPrefab, trans);
-                    Undo.RegisterCreatedObjectUndo(card.gameObject, "Symmetrical Created");
-                    card.transform.position = symmetricalPos;
-                    card.transform.rotation = Quaternion.Euler(symmetricalRot);
-                }
-            }
-        }
-        
-        /// <summary>
-        /// 沿z轴对称
-        /// </summary>
-        public void SymmetricalAlongZ()
-        {
-            int childCount = Root.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform trans = Root.GetChild(i);
-                if(!IsDCLayer(trans)) return;
-                int count = trans.childCount;
-                for (int j = 0; j < count; j++)
-                {
-                    Transform cardTrans = trans.GetChild(j);
-                    if(!IsDCCard(cardTrans)) return;
-                    //在对称位置生成物体
-                    Vector3 originPos = cardTrans.position;
-                    Vector3 symmetricalPos = new Vector3(originPos.x, originPos.y, -originPos.z);
-                    Vector3 originRot = cardTrans.rotation.eulerAngles;
-                    Vector3 symmetricalRot = new Vector3(originRot.x, -originRot.y, originRot.z);
-                    DCDominoCard card = Instantiate(dominoPrefab, trans);
-                    Undo.RegisterCreatedObjectUndo(card.gameObject, "Symmetrical Created");
-                    card.transform.position = symmetricalPos;
-                    card.transform.rotation = Quaternion.Euler(symmetricalRot);
-                }
-            }
-        }
-
-        #region 判断
-
-        private bool IsDCLayer(Component com)
-        {
-            return com.TryGetComponent<DCLayer>(out _);
-        }
-        
-        private bool IsDCCard(Component com)
-        {
-            return com.TryGetComponent<DCDominoCard>(out _);
         }
 
         #endregion

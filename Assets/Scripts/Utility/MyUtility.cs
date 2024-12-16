@@ -15,5 +15,15 @@ namespace DCEditor.Utility
                 callback.Invoke(i, obj);
             }
         }
+        
+        public static bool IsDCLayer(Component com)
+        {
+            return com.TryGetComponent<DCLayer>(out _);
+        }
+        
+        public static bool IsDCCard(Component com)
+        {
+            return com.TryGetComponent<DCDominoCard>(out _);
+        }
     }
 }
